@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ne">
 <head>
@@ -12,7 +11,7 @@ header{background:#0757b8;color:white;text-align:center;padding:25px 10px}
 .card{background:white;padding:20px;border-radius:14px;box-shadow:0 3px 12px #0001}
 h2{color:#0757b8}
 input,textarea,select{width:100%;padding:13px;margin:8px 0;box-sizing:border-box;border:1px solid #ccd4df;border-radius:8px;font-size:16px}
-button{background:#0757b8;color:white;border:0;padding:13px;border-radius:8px;width:100%;font-size:16px;margin-top:10px}
+button{background:#0757b8;color:white;border:0;padding:13px;border-radius:8px;width:100%;font-size:16px;margin-top:10px;cursor:pointer}
 .job{border:1px solid #ddd;padding:12px;border-radius:9px;margin-top:12px}
 </style>
 </head>
@@ -24,10 +23,12 @@ button{background:#0757b8;color:white;border:0;padding:13px;border-radius:8px;wi
 <div class="container">
 <div class="card">
 <h2>नयाँ मर्मत बुकिङ</h2>
-<input id="name" placeholder="ग्राहकको नाम">
-<input id="phone" placeholder="मोबाइल नम्बर" type="tel">
-<input id="model" placeholder="मोबाइल कम्पनी र मोडेल">
-<select id="problem">
+
+<form action=" https://formspree.io/f/xvkkwrwo"method="POST">
+<input id="name" name="ग्राहकको नाम" placeholder="ग्राहकको नाम" required>
+<input id="phone" name="मोबाइल नम्बर" placeholder="मोबाइल नम्बर" type="tel" required>
+<input id="model" name="मोबाइल कम्पनी र मोडेल" placeholder="मोबाइल कम्पनी र मोडेल" required>
+<select id="problem" name="समस्या" required>
 <option value="">मोबाइलको समस्या छान्नुहोस्</option>
 <option>डिस्प्ले फुटेको</option>
 <option>ब्याट्री समस्या</option>
@@ -36,66 +37,16 @@ button{background:#0757b8;color:white;border:0;padding:13px;border-radius:8px;wi
 <option>पानी परेको</option>
 <option>अन्य समस्या</option>
 </select>
-<textarea id="details" placeholder="समस्याको थप विवरण"></textarea>
-<input id="price" type="number" placeholder="मर्मत शुल्क (रु.)">
-<button onclick="saveJob()">बुकिङ सुरक्षित गर्नुहोस्</button>
+<textarea id="details" name="विवरण" placeholder="समस्याको थप विवरण"></textarea>
+<input id="price" name="मर्मत शुल्क" type="number" placeholder="मर्मत शुल्क (रु.)">
+<button type="submit">बुकिङ पठाउनुहोस्</button>
+</form>
+
 </div>
 <div class="card" style="margin-top:20px">
 <h2>मर्मत बुकिङ विवरण</h2>
 <div id="jobs">अहिलेसम्म कुनै बुकिङ छैन।</div>
 </div>
 </div>
-<script>
-function saveJob(){
-let name=document.getElementById('name').value.trim();
-let phone=document.getElementById('phone').value.trim();
-let model=document.getElementById('model').value.trim();
-let problem=document.getElementById('problem').value;
-if(!name||!phone||!model||!problem){
-alert('कृपया सबै आवश्यक विवरण भर्नुहोस्।');return;
-}
-let jobs=JSON.parse(localStorage.getItem('hamroJobs')||'[]');
-jobs.push({name,phone,model,problem,details:document.getElementById('details').value,price:document.getElementById('price').value,status:'मर्मत बाँकी'});
-localStorage.setItem('hamroJobs',JSON.stringify(jobs));
-document.getElementById('name').value='';
-document.getElementById('phone').value='';
-document.getElementById('model').value='';
-document.getElementById('problem').value='';
-document.getElementById('details').value='';
-document.getElementById('price').value='';
-showJobs();
-alert('बुकिङ सफल भयो!');
-}
-function showJobs(){
-let jobs=JSON.parse(localStorage.getItem('hamroJobs')||'[]');
-document.getElementById('jobs').innerHTML=jobs.length?jobs.map((j,i)=>`
-<div class="job">
-<b>${j.name}</b><br>
-फोन: ${j.phone}<br>
-मोबाइल: ${j.model}<br>
-समस्या: ${j.problem}<br>
-शुल्क: रु. ${j.price||'तोकिएको छैन'}<br>
-स्थिति: 
-<select onchange="changeStatus(${i},this.value)">
-${['मर्मत बाँकी','मर्मत हुँदैछ','मर्मत पूरा भयो'].map(s=>`<option ${j.status===s?'selected':''}>${s}</option>`).join('')}
-</select>
-<button onclick="deleteJob(${i})">बुकिङ हटाउनुहोस्</button>
-</div>`).join(''):'अहिलेसम्म कुनै बुकिङ छैन।';
-}
-function changeStatus(i,s){
-let jobs=JSON.parse(localStorage.getItem('hamroJobs')||'[]');
-jobs[i].status=s;
-localStorage.setItem('hamroJobs',JSON.stringify(jobs));
-showJobs();
-}
-function deleteJob(i){
-if(!confirm('यो बुकिङ हटाउने हो?'))return;
-let jobs=JSON.parse(localStorage.getItem('hamroJobs')||'[]');
-jobs.splice(i,1);
-localStorage.setItem('hamroJobs',JSON.stringify(jobs));
-showJobs();
-}
-showJobs();
-</script>
 </body>
 </html>
